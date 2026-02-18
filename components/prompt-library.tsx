@@ -2,6 +2,7 @@
 
 import { AdminKeyModal } from "@/components/admin-key-modal";
 import { PromptList } from "@/components/prompt-list";
+import { PromptLibLogo } from "@/components/promptlib-logo";
 import { ShelfTabs } from "@/components/shelf-tabs";
 import { StudioOverlay } from "@/components/studio-overlay";
 import { clearAdminSession, readAdminSession } from "@/lib/client-admin-session";
@@ -223,9 +224,12 @@ export function PromptLibrary() {
   return (
     <div className="px-6 pb-16 pt-8 md:px-10">
       <header className="mx-auto mt-8 max-w-4xl">
-        <p className="mb-8 font-mono text-xs uppercase tracking-[0.26em] text-stone-400">
-          PromptLib 提示词库
-        </p>
+        <div className="mb-8 flex items-center gap-3 text-ink">
+          <PromptLibLogo className="h-9 w-9" />
+          <p className="font-mono text-xs uppercase tracking-[0.26em] text-stone-500">
+            PromptLib 提示词库
+          </p>
+        </div>
 
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <ShelfTabs
