@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #f5f5f5;
+  --ink: #1a1a1a;
+  --muted: #a0a0a0;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.72), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(0, 0, 0, 0.03), transparent 45%),
+    linear-gradient(170deg, rgba(255, 255, 255, 0.7), rgba(245, 245, 245, 0.96));
+  font-family: var(--font-serif), serif;
+}
+
+::selection {
+  color: #f5f5f5;
+  background: #1a1a1a;
+}
+
+@layer components {
+  .input-minimal {
+    @apply w-full border-0 border-b border-stone-300 bg-transparent pb-2 text-ink outline-none transition-colors;
+  }
+
+  .input-minimal:focus {
+    @apply border-ink;
+  }
+}
+
