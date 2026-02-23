@@ -13,6 +13,7 @@ interface StudioOverlayProps {
   onClose: () => void;
   onSaved: (prompt: PromptItem) => void;
   onDeleted: (id: string) => void;
+  startInEdit?: boolean;
   onAdminVerified?: (session: AdminSession) => void;
 }
 
@@ -26,6 +27,7 @@ export function StudioOverlay({
   onClose,
   onSaved,
   onDeleted,
+  startInEdit = false,
   onAdminVerified
 }: StudioOverlayProps) {
   const [draft, setDraft] = useState<PromptItem | null>(prompt);
@@ -39,9 +41,9 @@ export function StudioOverlay({
 
   useEffect(() => {
     setDraft(prompt);
-    setMode("read");
+    setMode(startInEdit ? "edit" : "read");
     setStatus(null);
-  }, [prompt]);
+  }, [prompt, startInEdit]);
 
   useEffect(() => {
     if (!isOpen) {

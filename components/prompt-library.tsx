@@ -71,6 +71,7 @@ export function PromptLibrary() {
   const [direction, setDirection] = useState(1);
   const [searchValue, setSearchValue] = useState("");
   const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null);
+  const [overlayStartInEdit, setOverlayStartInEdit] = useState(false);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminSession, setAdminSession] = useState<AdminSession | null>(() => {
     return typeof window === "undefined" ? null : readAdminSession();
@@ -130,6 +131,7 @@ export function PromptLibrary() {
   }
 
   function handlePromptSaved(updatedPrompt: PromptItem) {
+    setOverlayStartInEdit(false);
     setSelectedPrompt(updatedPrompt);
 
     mutate(
@@ -151,6 +153,7 @@ export function PromptLibrary() {
   }
 
   function handlePromptDeleted(id: string) {
+    setOverlayStartInEdit(false);
     setSelectedPrompt(null);
 
     mutate(
@@ -221,6 +224,32 @@ export function PromptLibrary() {
     setStatus("已退出管理员模式。");
   }
 
+  function handleSelectPrompt(prompt: PromptItem) {
+    setOverlayStartInEdit(false);
+    setSelectedPrompt(prompt);
+  }
+
+  function handleCreatePrompt() {
+    if (!isAdmin) {
+      return;
+    }
+
+    const defaultCategory =
+      CATEGORIES.find((category) => category !== ALL_CATEGORY) ?? ALL_CATEGORY;
+    const now = new Date().toISOString();
+
+    setOverlayStartInEdit(true);
+    setSelectedPrompt({
+      id: crypto.randomUUID(),
+      category: defaultCategory,
+      name: "",
+      overview: "",
+      content: "",
+      updatedAt: now,
+      sortOrder: prompts.length
+    });
+  }
+
   return (
     <div className="px-6 pb-16 pt-8 md:px-10">
       <header className="mx-auto mt-8 max-w-4xl">
@@ -239,6 +268,15 @@ export function PromptLibrary() {
           />
 
           <div className="flex items-center gap-3">
+            {isAdmin ? (
+              <button
+                type="button"
+                onClick={handleCreatePrompt}
+                className="rounded-full bg-ink px-4 py-2 font-mono text-xs uppercase tracking-widest text-paper transition hover:opacity-90"
+              >
+                增加提示词
+              </button>
+            ) : null}
             {isAdmin ? (
               <div className="rounded-full border border-stone-300 px-3 py-1 font-mono text-xs text-stone-500">
                 管理员：{adminSession?.adminName}
@@ -278,7 +316,7 @@ export function PromptLibrary() {
             >
               <PromptList
                 prompts={visiblePrompts}
-                onSelect={setSelectedPrompt}
+                onSelect={handleSelectPrompt}
                 isAdmin={isAdmin}
                 onMoveUp={(id) => movePrompt(id, -1)}
                 onMoveDown={(id) => movePrompt(id, 1)}
@@ -308,7 +346,11 @@ export function PromptLibrary() {
 
       <StudioOverlay
         prompt={selectedPrompt}
-        onClose={() => setSelectedPrompt(null)}
+        startInEdit={overlayStartInEdit}
+        onClose={() => {
+          setOverlayStartInEdit(false);
+          setSelectedPrompt(null);
+        }}
         onSaved={handlePromptSaved}
         onDeleted={handlePromptDeleted}
         onAdminVerified={setAdminSession}
